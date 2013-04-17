@@ -3,7 +3,6 @@ package com.xuyan.linkgame;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
-import android.widget.LinearLayout;
 
 public class StartActivity extends Activity {
 
