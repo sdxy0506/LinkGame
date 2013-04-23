@@ -47,12 +47,19 @@ public class GameView extends View{
 	protected void onDraw(Canvas canvas)
 	{
 		super.onDraw(canvas);
-		//setMap();
-		canvas.drawColor(Color.WHITE);
+		//canvas.drawColor(Color.WHITE);
+		Paint paint_bit=new Paint();
+		Paint paint=new Paint();
+		paint.setAntiAlias(true);
+		paint.setColor(Color.WHITE);
+		//paint.setStyle(Paint.Style.FILL);
 		for(int i=1;i<Array.map.length-1;i++){
 			for(int j=1;j<Array.map[i].length-1;j++){
-				Bitmap bitmap=BitmapFactory.decodeResource(this.getContext().getResources(), Array.map[i][j]);
-				canvas.drawBitmap(bitmap, i*90, j*90, null);
+				if(Array.map[i][j]==-1) canvas.drawRect(i*90,j*90,i*90+90,j*90+90,paint);
+				else {
+					Bitmap bitmap=BitmapFactory.decodeResource(this.getContext().getResources(), Array.map[i][j]);
+					canvas.drawBitmap(bitmap, i*90, j*90, paint_bit);
+					};
 			}
 		}
 		Bitmap bitmap1=BitmapFactory.decodeResource(this.getContext().getResources(), R.drawable.a);
@@ -92,24 +99,35 @@ public class GameView extends View{
 			}
 			change();
 	}
-	/*@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
-		currentX=event.getX();
-		currentY=event.getY();
-		touch_x=(int)currentX;
-		touch_y=(int)currentY;
-			invalidate();
-		return false;
-	}*/
 	public boolean onTouchEvent(MotionEvent event) {
 		touch_x=(int)event.getX();
 		touch_y=(int)event.getY();
-        Point p = new Point(touch_x, touch_y);
-        /*if(Array.map[p.x][p.y] != -1){
-        	selected.add(p);
-        }*/
-        invalidate();
-        return true;
+		int x=(touch_x-touch_x%90)/90;
+		int y=(touch_y-touch_y%90)/90;
+        Point p = new Point(x,y);
+        if(Array.map[p.x][p.y] != -1){
+            if(selected.size() == 1){
+                if(CheckLink.checklink(selected.get(0),p)){   
+                    removeMap(selected.get(0),p);
+                	//selected.add(p);
+                    selected.clear();
+                    invalidate();
+                }
+                else{
+                    selected.clear();
+                    //selected.add(p);
+                    invalidate();
+                }
+            }
+            else{
+                selected.add(p);
+                invalidate();
+            }
+        }
+        return super.onTouchEvent(event);
     }
+	public void removeMap(Point a,Point b){
+		Array.map[a.x][a.y]=-1;
+		Array.map[b.x][b.y]=-1;
+	}
 }
